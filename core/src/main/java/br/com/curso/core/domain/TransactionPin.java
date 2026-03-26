@@ -4,11 +4,11 @@ import br.com.curso.core.exception.TransactionPinException;
 import br.com.curso.core.exception.enums.ErrorCodeEnum;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class TransactionPin {
 
     private Long id;
-    private User user;
     private String pin;
     private Integer attempt;
     private Boolean blocked;
@@ -18,9 +18,8 @@ public class TransactionPin {
     public TransactionPin() {
     }
 
-    public TransactionPin(Long id, User user, String pin, Integer attempt, Boolean blocked, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public TransactionPin(Long id, String pin, Integer attempt, Boolean blocked, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.user = user;
         this.pin = pin;
         this.attempt = attempt;
         this.blocked = blocked;
@@ -28,8 +27,7 @@ public class TransactionPin {
         this.updatedAt = updatedAt;
     }
 
-    public TransactionPin(User user, String pin) throws TransactionPinException {
-        this.user = user;
+    public TransactionPin(String pin) throws TransactionPinException {
         setPin(pin);
         this.attempt = 3;
         this.blocked = false;
@@ -42,14 +40,6 @@ public class TransactionPin {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getPin() {
@@ -65,8 +55,17 @@ public class TransactionPin {
         return attempt;
     }
 
-    public void setAttempt(Integer attempt) {
-        this.attempt = attempt;
+    public void setAttempt() {
+        if(this.attempt == 1) {
+            this.blocked = true;
+            this.attempt = 0;
+        } else {
+            this.attempt = this.attempt - 1;
+        }
+    }
+
+    public void restaureAttempt() {
+        this.attempt = 3;
     }
 
     public Boolean getBlocked() {
@@ -87,6 +86,17 @@ public class TransactionPin {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof TransactionPin that)) return false;
+        return Objects.equals(id, that.id) && Objects.equals(pin, that.pin) && Objects.equals(attempt, that.attempt) && Objects.equals(blocked, that.blocked) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, pin, attempt, blocked, createdAt, updatedAt);
     }
 
     private void pinIsValid(String pin) throws TransactionPinException {

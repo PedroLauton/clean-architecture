@@ -20,6 +20,9 @@ public enum ErrorCodeEnum {
 
     ATH001("There was an authentication error.", "ATH-001"),
 
+    PIN001("TransactionPin Blocked", "PIN-001"),
+    PIN002("Incorrect Pin. %d Remaining attempt(s).", "PIN-002"),
+
     ;
 
     private String message;
@@ -44,5 +47,9 @@ public enum ErrorCodeEnum {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public static String pin0002Getmessage(Integer attempt) {
+        return String.format(PIN002.message, attempt);
     }
 }
