@@ -1,11 +1,11 @@
 package br.com.curso.core.domain;
 
+import br.com.curso.core.domain.enums.TransactionStatusEnum;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class Transaction {
-
     private Long id;
     private Wallet fromWallet;
     private Wallet toWallet;
@@ -13,8 +13,6 @@ public class Transaction {
     private TransactionStatusEnum status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    public Transaction() {}
 
     public Transaction(Long id, Wallet fromWallet, Wallet toWallet, BigDecimal value, TransactionStatusEnum status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
@@ -32,6 +30,9 @@ public class Transaction {
         this.value = value;
         this.status = TransactionStatusEnum.CREATED;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public Transaction() {
     }
 
     public Long getId() {
@@ -88,12 +89,27 @@ public class Transaction {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (!(o instanceof Transaction that)) return false;
-        return Objects.equals(id, that.id) && Objects.equals(fromWallet, that.fromWallet) && Objects.equals(toWallet, that.toWallet) && Objects.equals(value, that.value) && status == that.status && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
+
+        if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) return false;
+        if (!getFromWallet().equals(that.getFromWallet())) return false;
+        if (!getToWallet().equals(that.getToWallet())) return false;
+        if (!getValue().equals(that.getValue())) return false;
+        if (getStatus() != that.getStatus()) return false;
+        if (!getCreatedAt().equals(that.getCreatedAt())) return false;
+        return getUpdatedAt() != null ? getUpdatedAt().equals(that.getUpdatedAt()) : that.getUpdatedAt() == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fromWallet, toWallet, value, status, createdAt, updatedAt);
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + getFromWallet().hashCode();
+        result = 31 * result + getToWallet().hashCode();
+        result = 31 * result + getValue().hashCode();
+        result = 31 * result + getStatus().hashCode();
+        result = 31 * result + getCreatedAt().hashCode();
+        result = 31 * result + (getUpdatedAt() != null ? getUpdatedAt().hashCode() : 0);
+        return result;
     }
 }

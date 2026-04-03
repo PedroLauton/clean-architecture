@@ -1,30 +1,27 @@
 package br.com.curso.core.domain;
 
+import br.com.curso.core.domain.enums.UserTypeEnum;
 import br.com.curso.core.exception.TransferException;
 import br.com.curso.core.exception.enums.ErrorCodeEnum;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class Wallet {
-
     private Long id;
     private TransactionPin transactionPin;
     private BigDecimal balance;
     private User user;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime updateAt;
 
-    public Wallet() {}
-
-    public Wallet(Long id, TransactionPin transactionPin, BigDecimal balance, User user, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Wallet(Long id, TransactionPin transactionPin, BigDecimal balance, User user, LocalDateTime createdAt, LocalDateTime updateAt) {
         this.id = id;
         this.transactionPin = transactionPin;
         this.balance = balance;
         this.user = user;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.updateAt = updateAt;
     }
 
     public Wallet(TransactionPin transactionPin, BigDecimal balance, User user) {
@@ -32,6 +29,9 @@ public class Wallet {
         this.balance = balance;
         this.user = user;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public Wallet() {
     }
 
     public Long getId() {
@@ -46,6 +46,26 @@ public class Wallet {
         return balance;
     }
 
+    public void receiveValue(BigDecimal value){
+        this.balance.add(value);
+    }
+
+    public void transfer(BigDecimal value) throws TransferException {
+        if (this.user.getType() == UserTypeEnum.SHOPKEEPER){
+            throw new TransferException(ErrorCodeEnum.TR0001.getMessage(), ErrorCodeEnum.TR0001.getCode());
+        }
+
+        if (this.balance.compareTo(value) < 0){
+            throw new TransferException(ErrorCodeEnum.TR0002.getMessage(), ErrorCodeEnum.TR0002.getCode());
+        }
+
+        this.balance = this.balance.subtract(value);
+    }
+
+    public void receiveTransfer(BigDecimal value){
+        this.balance = this.balance.add(value);
+    }
+
     public User getUser() {
         return user;
     }
@@ -58,12 +78,12 @@ public class Wallet {
         return createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public LocalDateTime getUpdateAt() {
+        return updateAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
     }
 
     public TransactionPin getTransactionPin() {
@@ -74,32 +94,27 @@ public class Wallet {
         this.transactionPin = transactionPin;
     }
 
-    public void receiveValue(BigDecimal value) {
-        this.balance.add(value);
-    }
-
-    public void transferValue(BigDecimal value) throws TransferException {
-        if(this.user.getType().equals(UserTypeEnum.SHOPKEEPER)) {
-            throw new TransferException(ErrorCodeEnum.TR0001.getMessage(), ErrorCodeEnum.TR0001.getCode());
-        }
-
-        if(this.balance.compareTo(value) < 0) {
-            throw new TransferException(ErrorCodeEnum.TR0002.getMessage(), ErrorCodeEnum.TR0002.getCode());
-        }
-
-        this.balance.subtract(value);
-    }
-
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (!(o instanceof Wallet wallet)) return false;
-        return Objects.equals(id, wallet.id) && Objects.equals(transactionPin, wallet.transactionPin) && Objects.equals(balance, wallet.balance) && Objects.equals(user, wallet.user) && Objects.equals(createdAt, wallet.createdAt) && Objects.equals(updatedAt, wallet.updatedAt);
+
+        if (getId() != null ? !getId().equals(wallet.getId()) : wallet.getId() != null) return false;
+        if (!getTransactionPin().equals(wallet.getTransactionPin())) return false;
+        if (!getBalance().equals(wallet.getBalance())) return false;
+        if (!getUser().equals(wallet.getUser())) return false;
+        if (!getCreatedAt().equals(wallet.getCreatedAt())) return false;
+        return getUpdateAt() != null ? getUpdateAt().equals(wallet.getUpdateAt()) : wallet.getUpdateAt() == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, transactionPin, balance, user, createdAt, updatedAt);
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + getTransactionPin().hashCode();
+        result = 31 * result + getBalance().hashCode();
+        result = 31 * result + getUser().hashCode();
+        result = 31 * result + getCreatedAt().hashCode();
+        result = 31 * result + (getUpdateAt() != null ? getUpdateAt().hashCode() : 0);
+        return result;
     }
 }
-
-

@@ -4,27 +4,22 @@ import br.com.curso.core.exception.TransactionPinException;
 import br.com.curso.core.exception.enums.ErrorCodeEnum;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class TransactionPin {
-
     private Long id;
     private String pin;
     private Integer attempt;
     private Boolean blocked;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime updateAt;
 
-    public TransactionPin() {
-    }
-
-    public TransactionPin(Long id, String pin, Integer attempt, Boolean blocked, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public TransactionPin(Long id, String pin, Integer attempt, Boolean blocked, LocalDateTime createdAt, LocalDateTime updateAt) {
         this.id = id;
         this.pin = pin;
         this.attempt = attempt;
         this.blocked = blocked;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.updateAt = updateAt;
     }
 
     public TransactionPin(String pin) throws TransactionPinException {
@@ -32,6 +27,9 @@ public class TransactionPin {
         this.attempt = 3;
         this.blocked = false;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public TransactionPin() {
     }
 
     public Long getId() {
@@ -42,6 +40,7 @@ public class TransactionPin {
         this.id = id;
     }
 
+
     public String getPin() {
         return pin;
     }
@@ -51,23 +50,28 @@ public class TransactionPin {
         this.pin = pin;
     }
 
+    private void pinIsValid(String pin) throws TransactionPinException {
+        if (pin.length() != 8){
+            throw new TransactionPinException(ErrorCodeEnum.TRP0001.getMessage(), ErrorCodeEnum.TRP0001.getCode());
+        }
+    }
+
     public Integer getAttempt() {
         return attempt;
     }
 
     public void setAttempt() {
-        if(this.attempt == 1) {
+        if (this.attempt == 1){
             this.blocked = true;
             this.attempt = 0;
-        } else {
+        }else {
             this.attempt = this.attempt - 1;
         }
     }
 
-    public void restaureAttempt() {
+    public void restaureAttempt(){
         this.attempt = 3;
     }
-
     public Boolean getBlocked() {
         return blocked;
     }
@@ -80,28 +84,36 @@ public class TransactionPin {
         return createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+
+    public LocalDateTime getUpdateAt() {
+        return updateAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
     }
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (!(o instanceof TransactionPin that)) return false;
-        return Objects.equals(id, that.id) && Objects.equals(pin, that.pin) && Objects.equals(attempt, that.attempt) && Objects.equals(blocked, that.blocked) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
+
+        if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) return false;
+        if (!getPin().equals(that.getPin())) return false;
+        if (!getAttempt().equals(that.getAttempt())) return false;
+        if (!getBlocked().equals(that.getBlocked())) return false;
+        if (!getCreatedAt().equals(that.getCreatedAt())) return false;
+        return getUpdateAt() != null ? getUpdateAt().equals(that.getUpdateAt()) : that.getUpdateAt() == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, pin, attempt, blocked, createdAt, updatedAt);
-    }
-
-    private void pinIsValid(String pin) throws TransactionPinException {
-        if(pin.length() != 8) {
-            throw new TransactionPinException(ErrorCodeEnum.TRP0001.getMessage(), ErrorCodeEnum.TRP0001.getCode());
-        }
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + getPin().hashCode();
+        result = 31 * result + getAttempt().hashCode();
+        result = 31 * result + getBlocked().hashCode();
+        result = 31 * result + getCreatedAt().hashCode();
+        result = 31 * result + (getUpdateAt() != null ? getUpdateAt().hashCode() : 0);
+        return result;
     }
 }

@@ -84,4 +84,3 @@ public class TaxNumber {
         return cnpj.charAt(12) - '0' == secondDigit;
     }
 }
-

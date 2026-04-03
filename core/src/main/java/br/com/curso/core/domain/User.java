@@ -1,35 +1,42 @@
 package br.com.curso.core.domain;
 
+import br.com.curso.core.domain.enums.UserTypeEnum;
+
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.UUID;
 
 public class User {
-
     private UUID id;
-    private String nome;
-    private String email;
+    private String emain;
     private String password;
     private TaxNumber taxNumber;
-    private String fullName;
+    private String fullname;
     private UserTypeEnum type;
-    private TransactionPin transactionPin;
-    private LocalDateTime creaedAt;
+    private LocalDateTime createdAt;
     private LocalDateTime updateAt;
 
-    public User() {}
-
-    public User(UUID id, String nome, String email, String password, TaxNumber taxNumber, String fullName, UserTypeEnum type, TransactionPin transactionPin, LocalDateTime creaedAt, LocalDateTime updateAt) {
+    public User(UUID id, String emain, String password, TaxNumber taxNumber, String fullname, UserTypeEnum type, LocalDateTime createdAt, LocalDateTime updateAt) {
         this.id = id;
-        this.nome = nome;
-        this.email = email;
+        this.emain = emain;
         this.password = password;
         this.taxNumber = taxNumber;
-        this.fullName = fullName;
+        this.fullname = fullname;
         this.type = type;
-        this.transactionPin = transactionPin;
-        this.creaedAt = creaedAt;
+        this.createdAt = createdAt;
         this.updateAt = updateAt;
+    }
+
+    public User(String emain, String password, TaxNumber taxNumber, String fullname, UserTypeEnum type) {
+        this.id = UUID.randomUUID();
+        this.emain = emain;
+        this.password = password;
+        this.taxNumber = taxNumber;
+        this.fullname = fullname;
+        this.type = type;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public User() {
     }
 
     public UUID getId() {
@@ -40,20 +47,12 @@ public class User {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getEmain() {
+        return emain;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmain(String emain) {
+        this.emain = emain;
     }
 
     public String getPassword() {
@@ -72,12 +71,12 @@ public class User {
         this.taxNumber = taxNumber;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getFullname() {
+        return fullname;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
     public UserTypeEnum getType() {
@@ -88,16 +87,9 @@ public class User {
         this.type = type;
     }
 
-    public TransactionPin getTransactionPin() {
-        return transactionPin;
-    }
 
-    public void setTransactionPin(TransactionPin transactionPin) {
-        this.transactionPin = transactionPin;
-    }
-
-    public LocalDateTime getCreaedAt() {
-        return creaedAt;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public LocalDateTime getUpdateAt() {
@@ -110,12 +102,29 @@ public class User {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (!(o instanceof User user)) return false;
-        return Objects.equals(id, user.id) && Objects.equals(nome, user.nome) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(taxNumber, user.taxNumber) && Objects.equals(fullName, user.fullName) && type == user.type && Objects.equals(transactionPin, user.transactionPin) && Objects.equals(creaedAt, user.creaedAt) && Objects.equals(updateAt, user.updateAt);
+
+        if (!getId().equals(user.getId())) return false;
+        if (!getEmain().equals(user.getEmain())) return false;
+        if (!getPassword().equals(user.getPassword())) return false;
+        if (!getTaxNumber().equals(user.getTaxNumber())) return false;
+        if (!getFullname().equals(user.getFullname())) return false;
+        if (getType() != user.getType()) return false;
+        if (!getCreatedAt().equals(user.getCreatedAt())) return false;
+        return getUpdateAt() != null ? getUpdateAt().equals(user.getUpdateAt()) : user.getUpdateAt() == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nome, email, password, taxNumber, fullName, type, transactionPin, creaedAt, updateAt);
+        int result = getId().hashCode();
+        result = 31 * result + getEmain().hashCode();
+        result = 31 * result + getPassword().hashCode();
+        result = 31 * result + getTaxNumber().hashCode();
+        result = 31 * result + getFullname().hashCode();
+        result = 31 * result + getType().hashCode();
+        result = 31 * result + getCreatedAt().hashCode();
+        result = 31 * result + (getUpdateAt() != null ? getUpdateAt().hashCode() : 0);
+        return result;
     }
 }
